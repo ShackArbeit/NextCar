@@ -1,10 +1,12 @@
-import Image from 'next/image'
+
 import { Hero } from '@/components'
 import {SearchBar} from '@/components'
 import {CustomFilter} from '@/components'
 import { fetchCars } from '@/utils'
 import {CarCard} from '@/components'
 import { HomeProps } from '@/types'
+import { fuels, yearsOfProduction } from '@/constants'
+import {ShowMore} from '@/components'
 
 export default async function Home({ searchParams }: HomeProps) {
   const allCars = await fetchCars({
@@ -26,8 +28,8 @@ export default async function Home({ searchParams }: HomeProps) {
       <div className='home__filters'>
           <SearchBar/>
           <div className='homr__filter-container'>
-              <CustomFilter/>
-              <CustomFilter/>
+              <CustomFilter title='fuel' options={fuels} />
+              <CustomFilter  title='year' options={yearsOfProduction} />
           </div>
       </div>
       {!isDataEmpty?(
@@ -37,6 +39,10 @@ export default async function Home({ searchParams }: HomeProps) {
                 <CarCard car={car} />
               ))}
           </div>
+          <ShowMore
+            pageNumber={(searchParams.limit || 10) / 10}
+            isNext={(searchParams.limit||10)>allCars.length}
+          />
         </section>
       ):(
         <div className='home__error-container'>
@@ -44,6 +50,7 @@ export default async function Home({ searchParams }: HomeProps) {
           <p>{allCars?.message}</p>
         </div>
       )}
+
     </div>
   </main>
   )
